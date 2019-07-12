@@ -1,0 +1,7 @@
+name: 'Custom Behaviors'
+description: 'Custom module to implement custom functionalities'
+type: module
+core: 8.x
+varsion: 1-dev
+package: Custom Behaviors
+    

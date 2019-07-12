@@ -1,0 +1,8 @@
+custom_behaviors.pagejson:
+  path: '/pagejson/{api_key}/{node1}'
+  methods:  [GET]
+  defaults:
+    _controller: '\Drupal\custom_behaviors\Controller\CustomController::pagejson'
+    _title: ''
+  requirements: 
+    _permission: 'access content'

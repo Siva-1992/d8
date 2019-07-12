@@ -1,0 +1,51 @@
+<?php
+/**
+ * @file custom_behaviors.module
+ * @author Siva Iyyappan
+ * 
+ */
+use Drupal\Core\Form\FormBase;
+use Drupal\Core\Form\FormStateInterface;
+/**
+ * Implements hook_form_alter().
+ *
+ */
+function custom_behaviors_form_alter(&$form, FormStateInterface $form_state, $form_id){
+  // Check the form id
+  if($form['#form_id'] == 'system_site_information_settings'){
+  	// Get the apikey variable
+  	$api_key = \Drupal::state()->get('siteapikey');
+  	// Prepare the custom text field to get the API Key
+    $form['site_information']['api_key'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Site API Key'),
+      '#description' => t('Enter the Site API Key.'),
+      '#default_value' => !empty($api_key) ? $api_key : 'No API Key yet',
+    );
+    foreach (array_keys($form['actions']) as $action) {
+      if ($action != 'preview' && isset($form['actions'][$action]['#type']) && $form['actions'][$action]['#type'] === 'submit') {
+      	// Initiate the submit callback
+        $form['actions'][$action]['#submit'][] = 'save_api_key';
+      }
+    }
+    // Change the form submit text
+    $form['actions']['submit']['#value'] = t('Update Configuration');
+  } 
+}
+/**
+ * Implements submit callback.
+ *
+ */
+function save_api_key(&$form, FormStateInterface $form_state){
+  // Get the form state values
+  foreach ($form_state->getValues() as $key => $value) {
+  	// Check the key and value from form state values
+  	if($key == 'api_key' && $value != 'No API Key yet'){
+  	  // Set the API Key into database variable
+  	  \Drupal::state()->set('siteapikey', $value);
+  	  // Show the status message after saving the configuration
+	  drupal_set_message('Site API Key ' . $value . ' is configured successfully.');
+  	}
+  }
+}
+?>
